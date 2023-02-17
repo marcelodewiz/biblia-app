@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Testamento;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class TestamentoController extends Controller
 {
@@ -17,11 +18,11 @@ class TestamentoController extends Controller
         if(Testamento::create($request->all())){
             return response()->json([
                 'message'=>'Testamento Cadastrado com sucesso'
-            ], 201);
+            ], Response::HTTP_CREATED);
         }
         return response()->json([
             'message' =>'Erro ao cadastrar o testamento.'
-        ], 404);
+        ], Response::HTTP_NOT_FOUND);
     }
 
     public function show($testamento)
@@ -35,7 +36,7 @@ class TestamentoController extends Controller
 
         return response()->json([
             'message' =>'Erro ao pesquisar o testamento.'
-        ], 404);
+        ], Response::HTTP_NOT_FOUND);
     }
 
     public function update(Request $request, $testamento)
@@ -48,7 +49,7 @@ class TestamentoController extends Controller
 
         return response()->json([
             'message' =>'Erro ao atualizar o testamento.'
-        ], 404);
+        ], Response::HTTP_NOT_FOUND);
     }
 
     public function destroy($testamento)
@@ -60,6 +61,6 @@ class TestamentoController extends Controller
 
         return response()->json([
             'message' =>'Erro ao excluir o testamento.'
-        ], 404);
+        ], Response::HTTP_NOT_FOUND);
     }
 }
