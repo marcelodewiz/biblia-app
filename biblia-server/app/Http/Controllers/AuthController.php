@@ -2,25 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
-use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Response;
 
 class AuthController extends Controller
 {
-    public function register(Request $request){
-        $fields = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|string|unique:users,email',
-            'password' => 'required|string|confirmed'
-        ]);
-
-        $user = User::create([
-           'name' => $fields['name'],
-           'email' => $fields['email'],
-           'password' => bcrypt($fields['password'])
-        ]);
+    public function register(RegisterRequest $request){
+        $user = User::create($request->validated());
 
         $token = $user->createToken($request->nameToken)->plainTextToken;
 
@@ -29,21 +21,17 @@ class AuthController extends Controller
             'token' => $token
         ];
 
-        return response($response, 201);
+        return response($response, Response::HTTP_CREATED);
     }
 
-    public function login(Request $request){
-        $fields = $request->validate([
-           'email'=>'required|string',
-           'password'=>'required|string'
-        ]);
+    public function login(LoginRequest $request){
 
-        $user = User::where('email', $fields['email'])->first();
+        $user = User::whereEmail($request->email)->first();
 
-        if(!$user || !Hash::check($fields['password'], $user->password)){
+        if(!$user || !Hash::check($request->password, $user->password)){
             return response([
                 'message'=> 'Email ou senha invalidos'
-            ], 401);
+            ], Response::HTTP_UNAUTHORIZED);
         }
 
         $token = $user->createToken('UsuarioLogado')->plainTextToken;
@@ -53,7 +41,7 @@ class AuthController extends Controller
             'token' => $token
         ];
 
-        return response($response, 201);
+        return response($response, Response::HTTP_OK);
 
     }
 
@@ -63,6 +51,6 @@ class AuthController extends Controller
 
         return response([
             'message' => 'Deslogado com sucesso'
-        ], 200);
+        ], Response::HTTP_OK);
     }
 }
