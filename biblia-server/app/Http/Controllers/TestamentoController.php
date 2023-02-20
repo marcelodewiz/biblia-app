@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TestamentoResource;
 use App\Models\Testamento;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -27,11 +28,10 @@ class TestamentoController extends Controller
 
     public function show($testamento)
     {
-        $testamento = Testamento::findOrFail($testamento);
-        if($testamento){
-            $testamento->livros;
+        $testamentoFounded = Testamento::with('livros')->find($testamento);
+        if($testamentoFounded){
 
-            return $testamento;
+            return new TestamentoResource($testamentoFounded);
         }
 
         return response()->json([
@@ -41,10 +41,10 @@ class TestamentoController extends Controller
 
     public function update(Request $request, $testamento)
     {
-        $testamento = Testamento::findOrFail($testamento);
-        if($testamento){
-            $testamento->update($request->all());
-            return $testamento;
+        $testamentoFounded = Testamento::find($testamento);
+        if($testamentoFounded){
+            $testamentoFounded->update($request->all());
+            return new TestamentoResource($testamentoFounded);
         }
 
         return response()->json([
@@ -54,9 +54,9 @@ class TestamentoController extends Controller
 
     public function destroy($testamento)
     {
-        $testamento = Testamento::find($testamento);
-        if($testamento){
-            return Testamento::destroy($testamento);
+        $testamentoFounded = Testamento::find($testamento);
+        if($testamentoFounded){
+            return Testamento::destroy($testamentoFounded);
         }
 
         return response()->json([

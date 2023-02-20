@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\VersiculoResource;
 use App\Models\Versiculo;
 use Illuminate\Http\Request;
 
@@ -30,10 +31,10 @@ class VersiculoController extends Controller
 
     public function show($versiculo)
     {
-        $versiculo = Versiculo::find($versiculo);
-        if($versiculo){
-            $versiculo->livro;
-            return $versiculo;
+        $versiculoFounded = Versiculo::find($versiculo);
+        if($versiculoFounded){
+            $versiculoFounded->livro;
+            return new VersiculoResource($versiculoFounded);
         }
 
         return response()->json([
@@ -50,9 +51,9 @@ class VersiculoController extends Controller
      */
     public function update(Request $request, $versiculo)
     {
-        $versiculo = Versiculo::findOrFail($versiculo);
-        $versiculo->update($request->all());
-        return $versiculo;
+        $versiculoFounded = Versiculo::findOrFail($versiculo);
+        $versiculoFounded->update($request->all());
+        return new VersiculoResource($versiculoFounded);
     }
 
     public function destroy($versiculo)

@@ -6,7 +6,7 @@ use App\Models\Testamento;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class TestamentoTest extends TestCase
+class TestamentoControllerTest extends TestCase
 {
 
     use RefreshDatabase;
@@ -17,14 +17,16 @@ class TestamentoTest extends TestCase
 
         $operator = new FeatureOperator();
         $token = $operator->loginUser($this);
-        Testamento::factory()->create(['nome' => 'Antigo Testamento']);
+        $testamento = Testamento::factory()->create(['nome' => 'Antigo Testamento']);
 
         $response = $this->withToken($token)
-            ->getJson('api/testamento/1')
+            ->getJson('api/testamento/'.$testamento->id)
             ->assertOk();
+        $testamento = $response->json('testamento');
+        $this->assertArrayHasKey('nome', $testamento);
+        $this->assertEquals('Antigo Testamento', $testamento['nome']);
 
-        $this->assertArrayHasKey('nome', $response->json());
-        $this->assertEquals('Antigo Testamento', $response->json('nome'));
+        $this->refreshDatabase();
     }
 
     public function test_testamentoGetAll()
@@ -41,6 +43,8 @@ class TestamentoTest extends TestCase
             ->assertOk();
 
         $this->assertEquals(2, count($response->json()));
+
+        $this->refreshDatabase();
     }
 
     public function test_testamentoPost()
@@ -57,6 +61,8 @@ class TestamentoTest extends TestCase
             ->assertCreated();
 
         $this->assertDatabaseHas('testamentos',['nome' => 'Novo Testamento']);
+
+        $this->refreshDatabase();
     }
 
     public function teste_testamentoUpdate()
@@ -66,14 +72,16 @@ class TestamentoTest extends TestCase
         $operator = new FeatureOperator();
         $token = $operator->loginUser($this);
 
-        Testamento::factory()->create();
+        $testamento = Testamento::factory()->create();
 
         $this->withToken($token)
-            ->putJson('api/testamento/1',
+            ->putJson('api/testamento/'.$testamento->id,
             ['nome' => 'Teste Update'])
             ->assertOk();
 
         $this->assertDatabaseHas('testamentos',['nome' => 'Teste Update']);
+
+        $this->refreshDatabase();
     }
 
     public function teste_testamentoDelete()
@@ -83,10 +91,12 @@ class TestamentoTest extends TestCase
         $operator = new FeatureOperator();
         $token = $operator->loginUser($this);
 
-        Testamento::factory()->create();
+        $testamento = Testamento::factory()->create();
 
         $this->withToken($token)
-            ->deleteJson('api/testamento/1')
+            ->deleteJson('api/testamento/'.$testamento->id)
             ->assertOk();
+
+        $this->refreshDatabase();
     }
 }
