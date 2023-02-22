@@ -16,7 +16,7 @@ class LivroController extends Controller
      */
     public function index()
     {
-        return new LivrosCollection(Livro::select('nome', 'abreviacao')->paginate(5));
+        return Livro::all();
     }
 
     /**
@@ -39,7 +39,7 @@ class LivroController extends Controller
 
     public function show($livro)
     {
-        $livroFounded = Livro::with('testamento','verisculos')->find($livro);
+        $livroFounded = Livro::with('testamento','versiculos')->find($livro);
         if($livroFounded){
             return new LivroResource($livroFounded);
         }
