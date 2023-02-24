@@ -21,3 +21,6 @@ Route::group(['middleware' => ['auth:sanctum']], function (){
     ]);
     Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 });
+
+//publico
+Route::get('/site', [\App\Http\Controllers\SiteController::class, 'index'])->name('site.index');

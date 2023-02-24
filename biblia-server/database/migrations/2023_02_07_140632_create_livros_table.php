@@ -15,12 +15,11 @@ return new class extends Migration
     {
         Schema::create('livros', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('testamento_id');
             $table->integer('posicao');
             $table->string('nome');
             $table->string('abreviacao');
-            $table->unsignedBigInteger('testamento_id');
             $table->timestamps();
-
             $table->foreign('testamento_id')->references('id')->on('testamentos');
         });
     }

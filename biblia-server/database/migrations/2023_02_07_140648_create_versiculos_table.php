@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('versiculos', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('livro_id');
             $table->integer('capitulo');
             $table->integer('versiculo');
             $table->text('texto');
-            $table->unsignedBigInteger('livro_id');
             $table->timestamps();
             $table->foreign('livro_id')->references('id')->on('livros');
         });

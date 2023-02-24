@@ -31,6 +31,10 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('versaos');
+        Schema::table('versoes', function (Blueprint $table) {
+            $table->dropForeign(['idioma_id']);
+            $table->dropColumn('idioma_id');
+        });
+        Schema::dropIfExists('versoes');
     }
 };
